@@ -7,12 +7,12 @@ router.post('/add-movie', authMiddleware, async (req, res) => {
     try {
         const newMovie = new Movie(req.body);
         await newMovie.save();
-        res.send({
+        res.status(201).send({
             success: true,
             message: " Movie added successfully"
         })
     } catch (error) {
-        res.send({
+        res.status(400).send({
             success: false,
             message: error.message
         })
@@ -26,12 +26,12 @@ router.post('/add-movie', authMiddleware, async (req, res) => {
 router.post('/update-movie', authMiddleware, async (req, res) => {
     try {
         await Movie.findByIdAndDelete(req.body.movieId, req.body);
-        res.send({
+        res.status(200).send({
             success: true,
             message: " Movie updated successfully"
         })
     } catch (error) {
-        res.send({
+        res.status(400).send({
             success: false,
             message: error.message
         })
@@ -43,13 +43,13 @@ router.post('/delete-movie', authMiddleware, async (req, res) => {
 
     try {
         await Movie.findByIdAndDelete(req.body.movieId);
-        res.send({
+        res.status(200).send({
             success: true,
             message: "Movie deleted successfully"
         })
 
     } catch (error) {
-        res.send({
+        res.status(400).send({
             success: false,
             message: error.message
         })

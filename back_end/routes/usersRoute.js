@@ -11,7 +11,7 @@ router.post("/register", async (req, res) => {
         // Existing User- Check
         const userExists = await user.findOne({ email: req.body.email });
         if (userExists) {
-            return res.send({
+            return res.status(400).send({
                 success: false,
                 message: "User already exists"
             })
@@ -25,10 +25,10 @@ router.post("/register", async (req, res) => {
         // Registering new User
         const newUser = new user(req.body);
         await newUser.save();
-        res.send({ success: true, message: "User Created Successfully" });
+        res.status(201).send({ success: true, message: "User Created Successfully" });
 
     } catch (error) {
-        res.send({
+        res.status(400).send({
             success: false,
             message: error.message
         });
@@ -41,7 +41,7 @@ router.post("/login", async (req, res) => {
         // Checking whether the user exists.
         const user = await User.findOne({ email: req.body.email });
         if (!user) {
-            return res.send({
+            return res.status(400).send({
                 success: false,
                 message: "User doesn't exist"
             });
@@ -54,7 +54,7 @@ router.post("/login", async (req, res) => {
 
         //Invalid password.
         if (!validPassword) {
-            return res.send({
+            return res.status(400).send({
                 success: false,
                 message: "Password Entered is invalid."
             })
@@ -69,7 +69,7 @@ router.post("/login", async (req, res) => {
         res.send({ success: true, message: "Logged in successfully", data: token })
 
     } catch (error) {
-        res.send({
+        res.status(400).send({
             success: false,
             message: error.message
         });
