@@ -2,7 +2,7 @@ const router = require('express').Router();
 const user = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const authMiddleware = require('../middlewares/authMiddleware');
+const adminauthMiddleware = require('../middlewares/adminauthMiddleware');
 
 //Registering a new User.
 router.post("/register", async (req, res) => {
@@ -18,16 +18,24 @@ router.post("/register", async (req, res) => {
         }
 
         // Password- Hash
-        const salt = await bcrypt.genSalt(10);
+        const salt = 10;
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         req.body.password = hashedPassword;
 
         // Registering new User
         const newUser = new user(req.body);
         await newUser.save();
+        const token = jwt.sign({ userId: newUser._id, role: newUser.role, Email: newUser.email }, process.env.jwt_secret, { expiresIn: "1d" })
+        res.cookie("token", token, {
+            sameSite: "None",
+            secure: true,
+            httpOnly: true,
+        });
+
         res.status(201).send({ success: true, message: "User Created Successfully" });
 
     } catch (error) {
+
         res.status(400).send({
             success: false,
             message: error.message
@@ -39,21 +47,20 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
     try {
         // Checking whether the user exists.
-        const user = await User.findOne({ email: req.body.email });
-        if (!user) {
+        const rgstduser = await user.findOne({ email: req.body.email });
+        if (!rgstduser) {
             return res.status(400).send({
                 success: false,
                 message: "User doesn't exist"
             });
         }
 
+
         //Validating the password by comparing hashed password & plain password.
-        const validPassword = await bcrypt.compare(
-            req.body.password, user.password
-        )
+        const validPassword = await bcrypt.compare(req.body.password, rgstduser.password)
 
         //Invalid password.
-        if (!validPassword) {
+        if (validPassword == false) {
             return res.status(400).send({
                 success: false,
                 message: "Password Entered is invalid."
@@ -61,9 +68,13 @@ router.post("/login", async (req, res) => {
         }
 
         //Creating Token
-        const token = jwt.sign({ userId: user._id }, process.env.jwt_secret, { expiresIn: "1d" })
+        const token = jwt.sign({ userId: rgstduser._id, role: rgstduser.role, Email: rgstduser.email }, process.env.jwt_secret, { expiresIn: "1d" })
 
-
+        res.cookie("token", token, {
+            sameSite: "None",
+            secure: true,
+            httpOnly: true,
+        });
 
         //When the password entered is valid.
         res.send({ success: true, message: "Logged in successfully", data: token })
@@ -76,24 +87,58 @@ router.post("/login", async (req, res) => {
     }
 });
 
-//Fetching user details using UserID (password avoided-)
-router.get('get-current-user' , authMiddleware, async(req, res)=>{
-    try {
-        const user = await user.findById(req.body.userId).select('-password')
-        res.send({
-            success: true,
-            message: "User details fetched successfully",
-            data: user
-        })
+//Fetching details of all users (password avoided-)
+router.get('/getallusers', adminauthMiddleware, async (req, res) => {
 
+    try {
+        const allusers = await user.find().select('-password')
+        res.json({
+            success: true,
+            message: "Users details fetched successfully",
+            data: allusers
+        })
 
     } catch (error) {
         res.send({
-            success:false,
+            success: false,
             message: error.message
         })
     }
 })
 
-module.exports = router; 
+//Fetching user details using UserID (password avoided-)
+router.post('/getuserbyid', adminauthMiddleware, async (req, res) => {
+
+    try {
+        const userbyid = await user.findOne({ _id: req.body.id }).select('-password')
+        res.json({
+            success: true,
+            message: "User details fetched successfully",
+            data: userbyid
+        })
+
+    } catch (error) {
+        res.send({
+            success: false,
+            message: error.message
+        })
+    }
+})
+
+// Logout
+router.get('/logout', async (req, res) => {
+    try {
+        res.clearCookie("token", {
+            sameSite: "None",
+            secure: true,
+            httpOnly: true,
+        });
+
+        res.json({ msg: "Logout Successful", ts: "success" });
+    } catch (error) {
+        res.status(error.status || 500).json({ msg: error.message || "Internal server error", ts: "error" });
+    }
+})
+
+module.exports = router;
 
