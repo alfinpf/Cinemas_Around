@@ -4,14 +4,14 @@ const Booking = require("../models/bookingModel");
 const Show = require("../models/showModel");
 
 // Booking a show
-router.post("/book-show", authMiddleware, async (req, res) => {
+router.post("/bookashow", authMiddleware, async (req, res) => {
   try {
     // Saving
     const newBooking = new Booking(req.body);
     await newBooking.save();
     const show = await Show.findById(req.body.show);
 
-    // Updaing Seats.
+    // Updating Seats.
     await Show.findByIdAndUpdate(req.body.show, {
       bookedSeats: [...show.bookedSeats, ...req.body.seats],
     });
@@ -30,7 +30,7 @@ router.post("/book-show", authMiddleware, async (req, res) => {
 });
 
 // Fetching details of all bookings done by a User.
-router.get("/get-bookings", authMiddleware, async (req, res) => {
+router.get("/getbookings", authMiddleware, async (req, res) => {
   try {
     const bookings = await Booking.find({ user: req.body.userId })
       .populate("show")

@@ -25,6 +25,14 @@ const movieSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    theatre: {
+        type: String,
+        required: true
+    },
+    imglink: {
+        type: String,
+        required: true
+    },
 },
     { timestamps: true }
 );

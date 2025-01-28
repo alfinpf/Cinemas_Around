@@ -1,6 +1,6 @@
-import jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 
-export const adminAuth = (req, res, next) => {
+const theatreAuth = (req, res, next) => {
     try {
         const { token } = req.cookies;
         if (!token) {
@@ -10,7 +10,6 @@ export const adminAuth = (req, res, next) => {
         if (!tokenVerified) {
             return res.status(401).json({ success: false, msg: "user not authenticated", ts: "error" });
         }
-
         if (tokenVerified.role == "admin" || tokenVerified.role == "theatreowner") {
             req.user = tokenVerified;
             return next();
@@ -22,3 +21,5 @@ export const adminAuth = (req, res, next) => {
         return res.status(500).json({ success: false, msg: "internal server error", ts: "error" });
     }
 };
+
+module.exports = theatreAuth;
