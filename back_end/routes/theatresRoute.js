@@ -6,17 +6,16 @@ const theatre = require("../models/theatreModel");
 const Show = require("../models/showModel");
 
 
-//Adding a new Theatre (network down, tested)
+//Adding a new Theatre (internet slow, tested ok)
 router.post('/addnewtheatrerequest', theatreauthMiddleware, async (req, res) => {
     try {
         const { name, address, phone, email, owner = req.body.user._id } = req.body.theatredata;
-
-        // Make sure that all required fields are provided
+        
         if (!name || !address || !phone || !email) {
             return res.status(400).json({ message: 'All fields are required.' });
         }
 
-        // Create a new theater
+        // Creating a new theater
         let newTheater = await theatre.create({ name, email, phone, owner, address });
 
         // response.
@@ -27,8 +26,7 @@ router.post('/addnewtheatrerequest', theatreauthMiddleware, async (req, res) => 
     }
 });
 
-
-//Fetching details of all theatres (network down, tested)
+//Fetching details of all theatres (internet slow, tested ok)
 router.get('/getalltheatres', adminauthMiddleware, async (req, res) => {
     try {
         const alltheatres = await theatre.find()
