@@ -1,0 +1,41 @@
+# Node dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+debug.log
+lerna-debug.log*
+
+# Build files
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Database files
+*.sqlite
+*.sqlite3
+db.json
+dump.sql
+
+# System/Editor files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Cache & Temp files
+.cache/
+.tmp/
