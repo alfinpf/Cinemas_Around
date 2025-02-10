@@ -8,7 +8,7 @@ const cors = require('cors')
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://cinemas-around.vercel.app/", 
+    "https://cinemas-around.vercel.app"
   ];
 
   app.use(
