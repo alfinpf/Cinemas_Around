@@ -66,7 +66,7 @@ router.get('/getallmovies', async (req, res) => {
 router.post('/getmoviebyid', async (req, res) => {
 
     try {
-        const moviebyid = await theatre.findOne({ _id: req.body.id })
+        const moviebyid = await movie.findOne({ _id: req.body.id })
         res.json({
             success: true,
             message: "Movie details fetched successfully",

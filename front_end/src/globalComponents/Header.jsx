@@ -1,76 +1,61 @@
+import axios from "axios";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
 function Header() {
+  const toggleTheme = () => {
+    const currentTheme =
+      document.documentElement.getAttribute("data-theme") || "mydarktheme";
+    const newTheme =
+      currentTheme === "mydarktheme" ? "mylighttheme" : "mydarktheme";
+    document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+  };
 
   const navigate = useNavigate();
 
-  return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900 fixed w-full z-999 ">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
-        <a className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img
-            src="/logo.png"
-            className="h-12"
-            alt="Flowbite Logo"
-          />
-        </a>
-        <button
-          data-collapse-toggle="navbar-default"
-          type="button"
-          className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-          aria-controls="navbar-default"
-          aria-expanded="false"
-        >
-          <span className="sr-only">Open main menu</span>
-          <svg
-            className="w-5 h-5"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 17 14"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M1 1h15M1 7h15M1 13h15"
-            />
-          </svg>
-        </button>
-        <div className="hidden w-full md:block md:w-auto" id="navbar-default">
-          <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
-                aria-current="page"
-              >
-                Home
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >
-                About
-              </a>
-            </li>
+  async function handleClick() {
+    try {
+      let response = await axios.get(`${import.meta.env.VITE_API_URI}/users/logout`);
+      console.log(response);
+    } catch (error) {
+    console.log(error);
+    }
+  }
 
-            <li>
-              <a onClick={()=> navigate("/login")}
-                
-                className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >
-                Login
-              </a>
-            </li>
-          </ul>
-        </div>
+  return (
+    <div className="navbar bg-primary fixed  z-50 text-white">
+      <div className="flex-1">
+        <img
+          onClick={() => navigate("/")}
+          className="h-12"
+          src="/logo.png"
+          alt="logo"
+        />
       </div>
-    </nav>
+      <div className="flex-none">
+        <ul className="menu menu-horizontal px-1">
+          <li>
+            <details>
+              <summary className="text-lg">Profile</summary>
+              <ul className=" bg-primary rounded-t-none p-2">
+                <li>
+                  <a onClick={toggleTheme}>Switch theme</a>
+                </li>
+                <li>
+                  <a>Profile</a>
+                </li>
+                <li>
+                  <a onClick={handleClick} className="text-red-600">
+                    Logout
+                  </a>
+                </li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </div>
+    </div>
   );
 }
 

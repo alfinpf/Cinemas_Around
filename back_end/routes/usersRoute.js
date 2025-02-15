@@ -110,7 +110,7 @@ router.get('/getallusers', adminauthMiddleware, async (req, res) => {
 router.post('/getuserbyid', adminauthMiddleware, async (req, res) => {
 
     try {
-        const userbyid = await user.findOne({_id: req.body.id }).select('-password')
+        const userbyid = await user.findOne({ _id: req.body.id }).select('-password')
         res.json({
             success: true,
             message: "User details fetched successfully",
